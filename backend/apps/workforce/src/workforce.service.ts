@@ -173,30 +173,37 @@ export class WorkforceService implements OnModuleInit {
       .returning();
 
     // send notif
-    const message = {
-      staffUserId: updated.userId,
-      staffName: updated.name,
-      changes: Object.keys(updateStaffDto),
-      timestamp: new Date().toISOString()
-    };
+    if (userRole != 'ADMIN') {
+      const message = {
+        staffUserId: updated.userId,
+        staffName: updated.name,
+        changes: Object.keys(updateStaffDto),
+        timestamp: new Date().toISOString()
+      };
 
-    const [publish] = await this.dbService.db
-      .insert(kafkaPublished)
-      .values({
-        topic: KAFKA_TOPICS.SEND_PUSH,
-        message: JSON.stringify(message),
-      })
-      .returning();
+      const [publish] = await this.dbService.db
+        .insert(kafkaPublished)
+        .values({
+          topic: KAFKA_TOPICS.SEND_PUSH,
+          message: JSON.stringify(message),
+        })
+        .returning();
 
-    this.kafkaClient.emit(KAFKA_TOPICS.SEND_PUSH, {
-      message: message,
-      messageId: publish.messageId
-    });
+      this.kafkaClient.emit(KAFKA_TOPICS.SEND_PUSH, {
+        message: message,
+        messageId: publish.messageId
+      });
+    }
 
     return updated;
   }
 
   async deleteStaff(id: string) {
+    const [deletedAttendance] = await this.dbService.db
+      .delete(attendances)
+      .where(eq(attendances.staffId, id))
+      .returning();
+      
     const [result] = await this.dbService.db
       .delete(staffs)
       .where(eq(staffs.id, id))
@@ -312,7 +319,7 @@ export class WorkforceService implements OnModuleInit {
     }
 
     let attendanceDate = new Date();
-    attendanceDate.setHours(0,0,0,0);
+    attendanceDate.setHours(0, 0, 0, 0);
 
     const [attendance] = await this.dbService.db
       .insert(attendances)
@@ -359,7 +366,7 @@ export class WorkforceService implements OnModuleInit {
         content: file.buffer, // Buffer received from Multer
       })
       .returning();
-    
+
     return newFile;
   }
 }

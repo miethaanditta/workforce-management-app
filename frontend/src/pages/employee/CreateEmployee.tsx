@@ -35,11 +35,11 @@ export default function CreateEmployee() {
                phoneNo: data.phoneNo,
                fileId: data.fileId
             });
-            navigate('/employee');
         } catch (error) {
             console.error("Create failed", error);
         } finally {
             setSubmitting(false);
+            navigate('/employee');
         }
     };
 

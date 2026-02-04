@@ -14,11 +14,11 @@ async function bootstrap() {
     transport: Transport.KAFKA,
     options: {
       client: {
-        clientId: `${KAFKA_CLIENT_ID}-notifications`,
+        clientId: `${KAFKA_CLIENT_ID}-security`,
         brokers: [KAFKA_BROKER]
       },
       consumer: {
-        groupId: `notifications-group`
+        groupId: `security-group`
       }
     }
   });

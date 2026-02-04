@@ -42,8 +42,8 @@ export default function StaffForm({ initialData, isEdit, onSubmit, loading }: St
         userId: '',
         name: '',
         positionId: '',
-        phoneNo: '',
-        fileId: '',
+        phoneNo: null,
+        fileId: null,
     });
 
     const [errors, setErrors] = useState<Partial<Record<keyof StaffFormState, string>>>({});
